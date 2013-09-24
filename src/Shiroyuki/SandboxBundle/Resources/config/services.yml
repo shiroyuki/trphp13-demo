@@ -1,0 +1,7 @@
+parameters:
+#    shiroyuki_sandbox.example.class: Shiroyuki\SandboxBundle\Example
+
+services:
+#    shiroyuki_sandbox.example:
+#        class: %shiroyuki_sandbox.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

@@ -1,0 +1,4 @@
+shiroyuki_sandbox:
+    resource: "@ShiroyukiSandboxBundle/Resources/config/routing.yml"
+    prefix:   /
+
