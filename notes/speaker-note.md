@@ -127,19 +127,29 @@ This architectural design, in my opinion, allows infinite possibility of how the
 
 Let's call Doctrine Event System "DES".
 
-There are many types of events. However, all events are triggered from UnitOfWork. So, as UnitOfWork is not tied to a specific entity, all managed entities or related information, such as change sets, will be passed along to the listeners.
+#### Event Listeners
 
-In this situation, even the listener has a check to selectively listen or ignore entities, the number of events triggered is approximately equivalent to the number of managed entities multiplied by the number of event listeners. It is a lot of unnecessary executions if the number of applicable entities is too low.
+An **event listener** is the simplest type of event listeners that listen events dispatched from the unit of work for all entities. This type of listener is simple and easy to use. However, it has a serious drawback when the entity manager deals with a large unit of work.
 
-The solution is simple. Use Doctrine event listeners sparingly if performance is your primary concern.
+Suppose the unit of work is large. Even though the listener has a check to selectively listen or ignore entities, the number of events triggered is approximately equivalent to the number of managed entities multiplied by the number of event listeners. It is a lot of unnecessary executions if the number of applicable entities is too low.
 
-#### Notes
+#### Entity Listeners
 
-event listener: for all entities
-entity listener: for one particular entity  
-lifecycle event: for one particular entity (the implementation is inside the entity.)
+An **entity listener** is a lifecycle listener class used for an entity. Unlike the event listeners, entity listeners are invoked for the specified entity or its mapped superclass. Additionally, the entity listeners do not require any Doctrine interfaces.
 
-- cannot alter associations on onFlush event listeners.
+- More efficient?
+
+This feature is added in Doctrine 2.4.
+
+#### Lifecycle Event Callbacks
+
+A lifecycle event callback is similar to an entity listener but the implementation is inside the entity.
+
+- Which one is better between entity listeners or lifecycle callbacks?
+
+#### Extra notes
+
+- Cannot alter associations on onFlush event listeners. (Why? Not in the documentation.)
 
 #### Examples
 
