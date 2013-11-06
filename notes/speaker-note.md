@@ -107,13 +107,18 @@ It is more readable and maintainable. Otherwise, the code is optimized but diffi
 
 - Case 4: Process 60,000 entities.
 
-### The Dark Side of Cascading: One good example on the fact that what you can do does not mean you should do it.
+### Cascading
 
 Cascading operations are magical. It saves you from writing a cool piece of code that traverses the object graphs for an operation. As how ORMs are designed to reduce that hardship from developers, some cascading operations that are not natively supported by the database software are usually supported by ORMs, such as, cascade on persist.
 
 Those additional supports are handy but come with cost.
 
 To illustrate the problem, suppose an entity called “n” with some associations
+
+#### Cascade on Persist
+#### Cascade on Delete
+#### Cascade on Merge
+#### Cascade on Refresh
 
 // Confirm again: "write-operation cascades are considered only in the implicit tracking policy."
 
@@ -137,7 +142,7 @@ Suppose the unit of work is large. Even though the listener has a check to selec
 
 An **entity listener** is a lifecycle listener class used for an entity. Unlike the event listeners, entity listeners are invoked for the specified entity or its mapped superclass. Additionally, the entity listeners do not require any Doctrine interfaces.
 
-- More efficient?
+The entity listeners are more efficient than the event listeners.
 
 This feature is added in Doctrine 2.4.
 
@@ -145,7 +150,9 @@ This feature is added in Doctrine 2.4.
 
 A lifecycle event callback is similar to an entity listener but the implementation is inside the entity.
 
-- Which one is better between entity listeners or lifecycle callbacks?
+This is the most efficient way to intercept events on a specific entity class.
+
+// work with a superclass?
 
 #### Extra notes
 
@@ -162,21 +169,28 @@ Reference: https://github.com/doctrine/doctrine2/pull/808
 
 When the client make a query to the database, the query speed can be wary due to many factors, such as, queries, I/O performance, database software, network latency, applicable algorithms and especially the size of the data reachable by the targeted database server. Although many database vendors provide some features to allow the faster performance, those features are only applicable under particular condition, such as, proper configuration, state of data in memory etc.
 
-Better than saying sorry, many people resort an approach of using a lookup table in order to reduce the search time where the size of the lookup table is less than or equal to the size of the reachable data.
+Inspired by Hibernate from Java, Doctrine 2 recently has the second level cache. The second level cache is designed to cache the data representation of entities, collections and queries. This will improve the lookup time as:
 
-Doctrine features a new feature called "second level cache" where applies the idea of using a lookup table.
+- The cache servers usually have faster read/write access than database servers.
+- The cache servers only need to search from the smaller data set. This means it is faster to find the queried data.
+
+Also, one obvious benefit of this is that we reduce the access to the database.
 
 ### Metadata Cache (ORM)
 
-...
+The metadata cache stores the class metadata which holds all object-relational mapping metadata of an entity and its associations and is parsed once from the configuration.
 
 ### Query Cache (ORM)
 
-switching the type of the data store (mysql -> sqlite) will need to clear doctrine cache.
+// switching the type of the data store (mysql -> sqlite) will need to clear doctrine cache.
+
+The query cache stores the translation of a DQL query to the equivalent SQL query.
 
 ### Result Cache (DBAL)
 
-cache the raw result sets from the data store
+// cache the raw result sets from the data store
+
+The result cache stores the raw result from the actual queries to the data store.
 
 ## More reading
 
