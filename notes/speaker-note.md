@@ -1,4 +1,4 @@
-	# Understanding Doctrine (2)
+# Understanding Doctrine (2)
 
 (Draft, updated on 2013.10.16)
 
@@ -7,6 +7,10 @@
 This talk briefly introduces the object-oriented mapping (ORM), how Doctrine ORM is designed. Then, this talk will move on to discuss about common misunderstanding about Doctrine, why we should care about Doctrine, how to use it properly and when to use its ORM part or DBAL (Database Abstract Layer).
 
 ## Introduction
+
+### Objective
+
+Introduce the unusual topics on how Doctrine is designed and works.
 
 ### What is object relational mapping? (Wikipedia, pattern designs)
 
@@ -18,7 +22,7 @@ The design of Doctrine 2 is initially based on Hibernate, one of Java ORMs, whic
 
 #### Object-relational Impedance Mismatch
 
-
+Doctrine 2's ORM is designed to solve the object-relational impedance mismatch which is related to many things, for example, data synchronization between object and the data source.
 
 #### Data Mapper Pattern
 
@@ -109,16 +113,15 @@ It is more readable and maintainable. Otherwise, the code is optimized but diffi
 
 ### Cascading
 
-Cascading operations are magical. It saves you from writing a cool piece of code that traverses the object graphs for an operation. As how ORMs are designed to reduce that hardship from developers, some cascading operations that are not natively supported by the database software are usually supported by ORMs, such as, cascade on persist.
+Cascading operations are magical. It saves you from writing a cool piece of code that traverses the object graphs to cascade operations on the associations of the object. As how ORMs are designed to reduce that hardship from developers, some cascading operations that are not natively supported by the database software are usually supported by ORMs, such as, cascade on persist and delete.
 
-Those additional supports are handy but come with cost.
+Doctrine 2 comes with support for cascade on persist, delete, merge and refresh.
 
-To illustrate the problem, suppose an entity called “n” with some associations
+The magical cascades comes with cost.
 
-#### Cascade on Persist
-#### Cascade on Delete
-#### Cascade on Merge
-#### Cascade on Refresh
+First, all software-based cascade operations are performed in memory. As the operations require related object graphs, the operations can introduce considerable performance overhead. It is recommended to use built-in features, such as, onDelete for some database software.
+
+One thing about cascading is the orphan removal. This is to remove the unused data. In theory, if you let Doctrine to handle cascade on delete, Doctrine will have no choice but attempting to pull all related data to identify orphan data and remove if necessary. (Question: is this correct?)
 
 // Confirm again: "write-operation cascades are considered only in the implicit tracking policy."
 
@@ -152,7 +155,9 @@ A lifecycle event callback is similar to an entity listener but the implementati
 
 This is the most efficient way to intercept events on a specific entity class.
 
-// work with a superclass?
+In 2.4, the event data is provided to the callback function.
+
+(Question: work with a superclass?)
 
 #### Extra notes
 
@@ -165,7 +170,7 @@ This is the most efficient way to intercept events on a specific entity class.
 
 ### Second Level Cache
 
-Reference: https://github.com/doctrine/doctrine2/pull/808
+Reference: https://github.com/doctrine/doctrine2/pull/808, https://github.com/FabioBatSilva/doctrine2/blob/16ee00c2396a49c2f7a6e83e6a44ffe82266a409/docs/en/reference/second-level-cache.rst
 
 When the client make a query to the database, the query speed can be wary due to many factors, such as, queries, I/O performance, database software, network latency, applicable algorithms and especially the size of the data reachable by the targeted database server. Although many database vendors provide some features to allow the faster performance, those features are only applicable under particular condition, such as, proper configuration, state of data in memory etc.
 
@@ -182,13 +187,13 @@ The metadata cache stores the class metadata which holds all object-relational m
 
 ### Query Cache (ORM)
 
-// switching the type of the data store (mysql -> sqlite) will need to clear doctrine cache.
+// note: switching the type of the data store (mysql -> sqlite) will need to clear doctrine cache.
 
 The query cache stores the translation of a DQL query to the equivalent SQL query.
 
 ### Result Cache (DBAL)
 
-// cache the raw result sets from the data store
+// note: cache the raw result sets from the data store
 
 The result cache stores the raw result from the actual queries to the data store.
 
