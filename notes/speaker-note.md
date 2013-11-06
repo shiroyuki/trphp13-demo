@@ -1,4 +1,4 @@
-# Understanding Doctrine (2)
+	# Understanding Doctrine (2)
 
 (Draft, updated on 2013.10.16)
 
@@ -73,7 +73,7 @@ And the result will have user entities with loaded group entities.
 
 You can also use `SELECT PARTIAL` if you need just the name of the user to avoid proxy loading.
 
-	SELECT PARTIAL u.{id, name} FROM User u
+	SELECT PARTIAL u.{id, name} FROM User u where u.id = :id
 
 Or if you need the name of the user and group, then you can write:
 
@@ -165,6 +165,18 @@ When the client make a query to the database, the query speed can be wary due to
 Better than saying sorry, many people resort an approach of using a lookup table in order to reduce the search time where the size of the lookup table is less than or equal to the size of the reachable data.
 
 Doctrine features a new feature called "second level cache" where applies the idea of using a lookup table.
+
+### Metadata Cache (ORM)
+
+...
+
+### Query Cache (ORM)
+
+switching the type of the data store (mysql -> sqlite) will need to clear doctrine cache.
+
+### Result Cache (DBAL)
+
+cache the raw result sets from the data store
 
 ## More reading
 
